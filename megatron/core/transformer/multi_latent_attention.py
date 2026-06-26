@@ -309,7 +309,7 @@ class MultiLatentAttention(Attention):
                     extra_kwargs["qr"] = q_compressed
                     extra_kwargs["prev_topk_indices"] = getattr(
                         self.core_attention, "current_topk_indices", None
-                    )
+                    )  # FlagScale Add
                 with off_interface(
                     self.offload_core_attention and self.training, query, "core_attn"
                 ) as query:

@@ -372,6 +372,7 @@ class TransformerConfig(ModelParallelConfig):
     """Whether to use sparse DSA indexer loss. If True, the indexer loss will be computed using the
     top-k indices."""
 
+    ##### FlagScale Begin #####
     indexer_types: Optional[List[str]] = None
     """List of indexer types for each layer. If None, all layers will use the 'full' indexer type.
     Can also be set via indexer_type_rule string, which will be expanded in __post_init__."""
@@ -386,6 +387,7 @@ class TransformerConfig(ModelParallelConfig):
       - repeat(type, ...)  — repeating pattern to fill remaining layers
       - Segments after repeat() become suffix (appended at the end)
     """
+    ##### FlagScale End #####
 
     ####################
     # DeepSeek-v4 hybrid attention
@@ -1295,6 +1297,7 @@ class TransformerConfig(ModelParallelConfig):
                 f"{self.linear_num_value_heads=} must be a multiple of "
                 f"({self.tensor_model_parallel_size=} * {self.context_parallel_size=})."
             )
+        ##### FlagScale Begin #####
         elif self.experimental_attention_variant == "dsa":
             # Expand indexer_type_rule into indexer_types list
             if self.indexer_type_rule is not None and self.indexer_types is None:
@@ -1311,6 +1314,7 @@ class TransformerConfig(ModelParallelConfig):
                     f"indexer_types must only contain {valid_types}, "
                     f"got {set(self.indexer_types) - valid_types}"
                 )
+        ##### FlagScale End #####
         elif self.experimental_attention_variant == "dsv4_hybrid":
             assert self.multi_latent_attention, "DSv4 Hybrid requires multi_latent_attention."
             assert self.csa_compress_ratios is not None, "csa_compress_ratios must be set"
@@ -2592,6 +2596,7 @@ class TransformerConfig(ModelParallelConfig):
                 self.attention_backend == AttnBackend.flash
             ), "Batch invariant mode only supports FlashAttention"
 
+    ##### FlagScale Begin #####
     @staticmethod
     def _parse_indexer_type_rule(rule: str, num_layers: int) -> List[str]:
         """Parse a compact indexer_type_rule string into a list of indexer types.
@@ -2670,6 +2675,8 @@ class TransformerConfig(ModelParallelConfig):
                 )
 
         return result
+
+    ##### FlagScale End #####
 
 
 @dataclass
